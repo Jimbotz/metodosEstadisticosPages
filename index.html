@@ -1,30 +1,149 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sample HTML Page</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>Métodos Estadísticos - Calculadora</title>
+    <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    <header>
-        <h1>Welcome to My Sample Page</h1>
-    </header>
-    <main>
-        <section>
-            <h2>About This Page</h2>
-            <p>This is a simple HTML page to demonstrate the structure of an HTML document.</p>
-        </section>
-        <section>
-            <h2>Features</h2>
-            <ul>
-                <li>Header Section</li>
-                <li>Main Content Area</li>
-                <li>Footer Section</li>
-            </ul>
-        </section>
-    </main>
-    <footer>
-        <p>&copy; 2024 Sample Page. All rights reserved.</p>
-    </footer>
+    <div class="container">
+        <header>
+            <h1>Calculadora de Métodos Estadísticos</h1>
+            <p>Herramienta interactiva para análisis de datos</p>
+        </header>
+
+        <div class="tabs">
+            <button class="tab active" onclick="showTab('anova', this)">ANOVA</button>
+            <button class="tab" onclick="showTab('chi', this)">Chi Cuadrado</button>
+            <button class="tab" onclick="showTab('pca', this)">Componentes Principales</button>
+            <button class="tab" onclick="showTab('correlation', this)">Correlación de Pearson</button>
+        </div>
+
+        <div id="anova" class="tab-content active">
+            <div class="explanation">
+                <h3>ANOVA (Análisis de la Varianza)</h3>
+                <p><strong>¿Qué es?</strong> ANOVA es una técnica estadística que contrasta si existen diferencias significativas entre las medias de una o más variables continuas en grupos de población distintos.</p>
+                <p><strong>¿Cuándo se usa?</strong> Cuando quieres comparar las medias de tres o más grupos independientes para determinar si al menos una es significativamente diferente.</p>
+                <div class="formula">F = Varianza entre grupos / Varianza dentro de grupos</div>
+            </div>
+
+            <div class="input-group">
+                <label>Grupos de datos (ingresa valores separados por comas para cada grupo):</label>
+                <div class="groups-container" id="anovaGroups">
+                    <div class="group-input">
+                        <input type="text" placeholder="Grupo 1: ej. 12, 15, 18, 20, 22">
+                        <button class="btn-remove-group" onclick="removeGroup(this)" style="display:none;">✕</button>
+                    </div>
+                </div>
+                <button class="btn-add-group" onclick="addGroup()">+ Agregar Grupo</button>
+            </div>
+
+            <div class="example-buttons">
+                <button class="btn-example" onclick="loadAnovaExample1()">Ejemplo 1: Diferencia significativa</button>
+                <button class="btn-example" onclick="loadAnovaExample2()">Ejemplo 2: Sin diferencia</button>
+            </div>
+
+            <div class="btn-group">
+                <button class="btn-calculate" onclick="calculateAnova()">Calcular ANOVA</button>
+                <button class="btn-clear" onclick="clearAnova()">Limpiar</button>
+            </div>
+
+            <div id="anovaResult"></div>
+        </div>
+
+        <div id="chi" class="tab-content">
+            <div class="explanation">
+                <h3>Chi Cuadrado (χ²)</h3>
+                <p><strong>¿Qué es?</strong> La prueba Chi Cuadrado contrasta la hipótesis de independencia entre dos variables.</p>
+                <p><strong>¿Cuándo se usa?</strong> Para determinar si existe una asociación significativa entre dos variables categóricas en una tabla de contingencia.</p>
+                <div class="formula">χ² = Σ [(Observado - Esperado)² / Esperado]</div>
+            </div>
+
+            <div class="input-group">
+                <label>Tabla de contingencia (formato: fila1: val1, val2 | fila2: val1, val2):</label>
+                <textarea id="chiInput" placeholder="Ejemplo:&#10;20, 30, 25&#10;15, 35, 30"></textarea>
+            </div>
+
+            <div class="example-buttons">
+                <button class="btn-example" onclick="loadChiExample1()">Ejemplo 1: Dependencia fuerte</button>
+                <button class="btn-example" onclick="loadChiExample2()">Ejemplo 2: Independencia</button>
+            </div>
+
+            <div class="btn-group">
+                <button class="btn-calculate" onclick="calculateChi()">Calcular Chi Cuadrado</button>
+                <button class="btn-clear" onclick="clearChi()">Limpiar</button>
+            </div>
+
+            <div id="chiResult"></div>
+        </div>
+
+        <div id="pca" class="tab-content">
+            <div class="explanation">
+                <h3>Análisis de Componentes Principales (PCA)</h3>
+                <p><strong>¿Qué es?</strong> PCA permite reducir el número de variables observadas a un menor número de variables artificiales (componentes principales), conservando la mayor parte de la información sobre la varianza.</p>
+                <p><strong>¿Cuándo se usa?</strong> Para simplificar conjuntos de datos complejos, eliminar redundancia y visualizar datos de alta dimensionalidad.</p>
+                <div class="formula">PC = Eigenvector × Datos Estandarizados</div>
+            </div>
+
+            <div class="input-group">
+                <label>Matriz de datos (cada fila es una observación, valores separados por comas):</label>
+                <textarea id="pcaInput" placeholder="Ejemplo (3 variables, 5 observaciones):&#10;2.5, 2.4, 1.5&#10;0.5, 0.7, 0.3&#10;2.2, 2.9, 1.8&#10;1.9, 2.2, 1.2&#10;3.1, 3.0, 2.1"></textarea>
+            </div>
+
+            <div class="example-buttons">
+                <button class="btn-example" onclick="loadPcaExample()">Ejemplo: Dataset de muestra</button>
+            </div>
+
+            <div class="btn-group">
+                <button class="btn-calculate" onclick="calculatePca()">Calcular PCA</button>
+                <button class="btn-clear" onclick="clearPca()">Limpiar</button>
+            </div>
+
+            <div id="pcaResult"></div>
+        </div>
+
+        <div id="correlation" class="tab-content">
+            <div class="explanation">
+                <h3>Coeficiente de Correlación de Pearson</h3>
+                <p><strong>¿Qué es?</strong> El coeficiente de correlación de Pearson mide el grado de covariación entre dos variables cuantitativas relacionadas linealmente.</p>
+                <p><strong>¿Cuándo se usa?</strong> Para determinar la fuerza y dirección de la relación lineal entre dos variables continuas.</p>
+                <div class="formula">r = Σ[(X - X̄)(Y - Ȳ)] / √[Σ(X - X̄)² × Σ(Y - Ȳ)²]</div>
+            </div>
+
+            <div class="input-group">
+                <label>Variable X (valores separados por comas):</label>
+                <input type="text" id="corrX" placeholder="Ejemplo: 1, 2, 3, 4, 5">
+            </div>
+
+            <div class="input-group">
+                <label>Variable Y (valores separados por comas):</label>
+                <input type="text" id="corrY" placeholder="Ejemplo: 2, 4, 6, 8, 10">
+            </div>
+
+            <div class="example-buttons">
+                <button class="btn-example" onclick="loadCorrExample1()">Ejemplo 1: Correlación positiva</button>
+                <button class="btn-example" onclick="loadCorrExample2()">Ejemplo 2: Correlación negativa</button>
+                <button class="btn-example" onclick="loadCorrExample3()">Ejemplo 3: Sin correlación</button>
+            </div>
+
+            <div class="btn-group">
+                <button class="btn-calculate" onclick="calculateCorrelation()">Calcular Correlación</button>
+                <button class="btn-clear" onclick="clearCorrelation()">Limpiar</button>
+            </div>
+
+            <div id="corrResult"></div>
+        </div>
+
+        <footer>
+            <p>© 2025 - Instituto Politécnico Nacional - UPIIT</p>
+        </footer>
+    </div>
+
+    <script src="js/main.js"></script>
+    <script src="js/anova.js"></script>
+    <script src="js/chi.js"></script>
+    <script src="js/pca.js"></script>
+    <script src="js/correlation.js"></script>
+</body>
 </html>
