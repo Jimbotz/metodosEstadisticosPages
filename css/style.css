@@ -36,7 +36,6 @@ body {
     background: linear-gradient(135deg, var(--color-guinda-principal) 0%, var(--color-guinda-oscuro) 100%);
     min-height: 100vh;
     padding: 20px;
-    /* CAMBIO: Color de texto por defecto */
     color: var(--color-texto-oscuro);
 }
 
@@ -51,7 +50,7 @@ body {
 
 header {
     background: linear-gradient(135deg, var(--color-guinda-principal) 0%, var(--color-guinda-medio) 100%);
-    color: var(--color-blanco); /* (Se respeta) */
+    color: var(--color-blanco);
     padding: 30px;
     text-align: center;
 }
@@ -82,7 +81,6 @@ header p {
     background: none;
     font-size: 1.1em;
     font-weight: 600;
-    /* CAMBIO: Texto a negro */
     color: var(--color-texto-oscuro);
     transition: all 0.3s ease;
     min-width: 150px;
@@ -92,9 +90,8 @@ header p {
     background: var(--color-fondo-claro-hover);
 }
 
-/* Tus colores ya estaban aplicados aquí, se respeta */
 .tab.active {
-    color: var(--color-guinda-medio); /* (Se respeta) */
+    color: var(--color-guinda-medio);
     background: var(--color-blanco);
     border-bottom: 3px solid var(--color-rojo-borde);
 }
@@ -123,14 +120,13 @@ header p {
 }
 
 .explanation h3 {
-    color: var(--color-rojo-borde); /* (Se respeta) */
+    color: var(--color-rojo-borde);
     margin-bottom: 15px;
     font-size: 1.5em;
 }
 
 .explanation p {
     line-height: 1.8;
-    /* CAMBIO: Texto a negro */
     color: var(--color-texto-oscuro);
     margin-bottom: 10px;
 }
@@ -144,7 +140,6 @@ header p {
     text-align: center;
     font-size: 1.1em;
     border: 2px dashed var(--color-rojo-borde);
-    /* (Hereda el color negro del body) */
 }
 
 .input-group {
@@ -154,7 +149,6 @@ header p {
 .input-group label {
     display: block;
     margin-bottom: 10px;
-    /* CAMBIO: Texto a negro */
     color: var(--color-texto-oscuro);
     font-weight: 600;
     font-size: 1.1em;
@@ -167,10 +161,8 @@ header p {
     border-radius: 8px;
     font-size: 1em;
     transition: border-color 0.3s;
-    /* (Hereda el color negro del body) */
 }
 
-/* Tu color ya estaba aplicado aquí, se respeta */
 .input-group input:focus, .input-group textarea:focus {
     outline: none;
     border-color: var(--color-rojo-borde);
@@ -183,7 +175,6 @@ header p {
 
 .btn-group {
     display: flex;
-    /* CAMBIO: Más margen */
     gap: 20px;
     margin-bottom: 30px;
 }
@@ -199,10 +190,9 @@ button {
     transition: all 0.3s ease;
 }
 
-/* Tu color ya estaba aplicado aquí, se respeta */
 .btn-calculate {
     background: linear-gradient(135deg, var(--color-guinda-principal) 0%, var(--color-guinda-medio) 100%);
-    color: var(--color-blanco); /* (Se respeta) */
+    color: var(--color-blanco);
 }
 
 .btn-calculate:hover {
@@ -212,7 +202,7 @@ button {
 
 .btn-clear {
     background: var(--color-texto-gris);
-    color: var(--color-blanco); /* (Se respeta) */
+    color: var(--color-blanco);
 }
 
 .btn-clear:hover {
@@ -221,7 +211,7 @@ button {
 
 .result-box {
     background: linear-gradient(135deg, var(--color-guinda-principal) 0%, var(--color-guinda-medio) 100%);
-    color: var(--color-blanco); /* (Se respeta) */
+    color: var(--color-blanco);
     padding: 30px;
     border-radius: 10px;
     margin-top: 30px;
@@ -252,7 +242,7 @@ button {
 
 footer {
     background: var(--color-fondo-oscuro);
-    color: var(--color-blanco); /* (Se respeta) */
+    color: var(--color-blanco);
     padding: 20px;
     text-align: center;
 }
@@ -300,7 +290,7 @@ footer {
     padding: 10px 20px;
     margin-top: 10px;
     background: var(--color-exito);
-    color: var(--color-blanco); /* (Se respeta) */
+    color: var(--color-blanco);
     border: none;
     border-radius: 5px;
     cursor: pointer;
@@ -319,9 +309,73 @@ footer {
 .btn-remove-group {
     padding: 10px 15px;
     background: var(--color-peligro);
-    color: var(--color-blanco); /* (Se respeta) */
+    color: var(--color-blanco);
     border: none;
     border-radius: 5px;
     cursor: pointer;
     flex: none;
+}
+
+/* --- NUEVOS ESTILOS AÑADIDOS --- */
+
+.results-header {
+    font-size: 1.5em;
+    font-weight: 600;
+    color: var(--color-texto-oscuro);
+    margin-top: 20px;
+    margin-bottom: 10px;
+    border-bottom: 2px solid var(--color-guinda-medio);
+    padding-bottom: 5px;
+}
+
+.results-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 25px;
+    font-size: 0.95em;
+}
+
+.results-table th,
+.results-table td {
+    border: 1px solid var(--color-borde);
+    padding: 12px 15px;
+    text-align: left;
+    color: var(--color-texto-oscuro);
+}
+
+.results-table th {
+    background-color: var(--color-fondo-claro);
+    font-weight: 600;
+    color: var(--color-texto-principal);
+}
+
+.results-table tr:nth-child(even) {
+    background-color: var(--color-fondo-claro);
+}
+
+.results-table td:first-child {
+    font-weight: 600;
+    color: var(--color-texto-oscuro);
+}
+
+/* Estilos para el resumen principal */
+.result-summary p {
+    font-size: 1.1em;
+    margin-bottom: 10px;
+    color: var(--color-texto-oscuro);
+}
+
+.result-summary strong {
+    font-weight: 600;
+    color: var(--color-texto-oscuro);
+}
+
+.result-summary .significant {
+    color: var(--color-exito);
+    font-weight: bold;
+}
+
+.result-summary .not-significant {
+    color: var(--color-peligro);
+    font-weight: bold;
 }

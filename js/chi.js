@@ -1,3 +1,5 @@
+let myChiChart; // Variable para la instancia del gráfico
+
 // Chi Cuadrado Functions
 function calculateChi() {
     const input = document.getElementById('chiInput').value.trim();
@@ -38,9 +40,11 @@ function calculateChi() {
 
     let chiSquare = 0;
     const expected = [];
+    const contributions = []; // <-- NUEVO: Matriz para guardar las contribuciones
 
     for (let i = 0; i < nRows; i++) {
         expected[i] = [];
+        contributions[i] = []; // <-- NUEVO: Inicializar la fila interna
         for (let j = 0; j < nCols; j++) {
             const exp = (rowTotals[i] * colTotals[j]) / total;
             if (exp === 0) {
@@ -48,57 +52,117 @@ function calculateChi() {
                 return;
             }
             expected[i][j] = exp;
-            chiSquare += Math.pow(rows[i][j] - exp, 2) / exp;
+            
+            // --- Cálculo de contribución individual ---
+            const contrib = Math.pow(rows[i][j] - exp, 2) / exp; // <-- NUEVO
+            contributions[i][j] = contrib; // <-- NUEVO: Guardar contribución
+            chiSquare += contrib; // <-- MODIFICADO: Sumar la contribución
         }
     }
 
     const df = (nRows - 1) * (nCols - 1);
     
-    // Tabla simplificada de valores críticos de Chi Cuadrado para α=0.05
-    const criticalValues = {
-        1: 3.841, 2: 5.991, 3: 7.815, 4: 9.488, 5: 11.070,
-        6: 12.592, 7: 14.067, 8: 15.507, 9: 16.919, 10: 18.307
-    };
-    
-    const critical = criticalValues[df] || (df > 0 ? 1.645 * Math.sqrt(2 * df) + df : 3.841); // Aproximación para df > 10
-    
-    let interpretation = '';
-    if (chiSquare > critical) {
-        interpretation = `Las variables parecen ser DEPENDIENTES (χ² = ${chiSquare.toFixed(4)} > valor crítico ≈ ${critical.toFixed(4)})`;
+    // Cálculo del Valor p (usando jStat)
+    const pValue = 1 - jStat.chisquare.cdf(chiSquare, df);
+
+    let interpretationText = '';
+    let interpretationClass = '';
+    if (pValue < 0.05) {
+        interpretationText = 'se considera estadísticamente significativa (las variables parecen ser dependientes).';
+        interpretationClass = 'significant';
     } else {
-        interpretation = `Las variables parecen ser INDEPENDIENTES (χ² = ${chiSquare.toFixed(4)} ≤ valor crítico ≈ ${critical.toFixed(4)})`;
+        interpretationText = 'no se considera estadísticamente significativa (las variables parecen ser independientes).';
+        interpretationClass = 'not-significant';
     }
 
-    document.getElementById('chiResult').innerHTML = `
-        <div class="result-box">
-            <h3>Resultados del Chi Cuadrado</h3>
-            <div class="result-item">
-                <strong>Dimensión de la tabla:</strong>
-                <span class="result-value">${nRows} × ${nCols}</span>
-            </div>
-            <div class="result-item">
-                <strong>Estadístico χ²:</strong>
-                <span class="result-value">${chiSquare.toFixed(4)}</span>
-            </div>
-            <div class="result-item">
-                <strong>Grados de libertad (gl):</strong>
-                <span class="result-value">${df}</span>
-            </div>
-            <div class="result-item">
-                <strong>Valor crítico aprox. (α=0.05):</strong>
-                <span class="result-value">${critical.toFixed(4)}</span>
-            </div>
-            <div class="result-item">
-                <strong>Interpretación:</strong>
-                <span class="result-value">${interpretation}</span>
-            </div>
+    // --- Generación del nuevo HTML ---
+    const resultDiv = document.getElementById('chiResult');
+    resultDiv.innerHTML = `
+        <div class="result-summary">
+            <h3 class="results-header">Resultados</h3>
+            <p><strong>Valor estadístico χ²</strong> = ${chiSquare.toFixed(4)}</p>
+            <p><strong>Grados de libertad (gl)</strong> = ${df}</p>
+            <p><strong>Valor p</strong> = ${pValue.toFixed(8)}</p>
+            <p>Este resultado <span class="${interpretationClass}">${interpretationText}</span></p>
         </div>
-    `;
+
+        <div>
+            <h3 class="results-header">Tabla de frecuencias observadas</h3>
+            ${createHtmlTable(rows, nRows, nCols, "Fila", "Col")}
+        </div>
+        
+        <div>
+            <h3 class="results-header">Tabla de frecuencias esperadas</h3>
+            ${createHtmlTable(expected, nRows, nCols, "Fila", "Col", (val) => val.toFixed(2))}
+        </div>
+
+        <div>
+            <h3 class="results-header">Tabla de Contribuciones al χ²</h3>
+            <p style="text-align: center; font-size: 0.9em; margin-top: -10px;">(La suma de esta tabla es el valor total de χ²)</p>
+            ${createHtmlTable(contributions, nRows, nCols, "Fila", "Col", (val) => val.toFixed(5))}
+        </div>
+        `;
+
+    // --- Dibujar el gráfico ---
+    renderChiChart(rows, nRows, nCols);
+}
+
+// Función auxiliar para crear tablas HTML
+function createHtmlTable(data, nRows, nCols, rowHeader, colHeader, formatter = (val) => val) {
+    let table = '<table class="results-table"><thead><tr>';
+    table += `<th>${rowHeader} / ${colHeader}</th>`;
+    for (let j = 0; j < nCols; j++) table += `<th>${colHeader} ${j + 1}</th>`;
+    table += '</tr></thead><tbody>';
+    for (let i = 0; i < nRows; i++) {
+        table += `<tr><td>${rowHeader} ${i + 1}</td>`;
+        for (let j = 0; j < nCols; j++) {
+            table += `<td>${formatter(data[i][j])}</td>`;
+        }
+        table += '</tr>';
+    }
+    table += '</tbody></table>';
+    return table;
+}
+
+function renderChiChart(data, nRows, nCols) {
+    const ctx = document.getElementById('chiChart').getContext('2d');
+    
+    if (myChiChart) {
+        myChiChart.destroy();
+    }
+    
+    // Colores (puedes añadir más)
+    const colors = ['rgba(94, 33, 41, 0.6)', 'rgba(148, 52, 23, 0.6)', 'rgba(255, 193, 7, 0.6)', 'rgba(108, 117, 125, 0.6)'];
+    
+    myChiChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: Array.from({ length: nCols }, (_, j) => `Columna ${j + 1}`), // Etiquetas Eje X
+            datasets: Array.from({ length: nRows }, (_, i) => ({
+                label: `Fila ${i + 1}`,
+                data: data[i], // Datos para esta fila
+                backgroundColor: colors[i % colors.length],
+            }))
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+                title: { display: true, text: 'Frecuencias observadas por grupo' }
+            },
+            scales: {
+                y: { beginAtZero: true, title: { display: true, text: 'Frecuencia' } }
+            }
+        }
+    });
 }
 
 function clearChi() {
     document.getElementById('chiInput').value = '';
     document.getElementById('chiResult').innerHTML = '';
+    if (myChiChart) {
+        myChiChart.destroy();
+    }
 }
 
 function loadChiExample1() {

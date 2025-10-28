@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Métodos estadísticos - calculadora</title>
     <link rel="stylesheet" href="css/style.css">
+
+    <script src="https://cdn.jsdelivr.net/npm/jstat@latest/dist/jstat.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
 </head>
 <body>
     <div class="container">
@@ -20,10 +24,9 @@
             <button class="tab" onclick="showTab('correlation', this)">Correlación de Pearson</button>
         </div>
 
-        <!--ANOVA PART-->
         <div id="anova" class="tab-content active">
             <div class="explanation">
-                <h3>ANOVA (Análisis de la varianza)</h3>
+                <h3>Análisis de la varianza (ANOVA)</h3>
                 <p><strong>¿Qué es?</strong> ANOVA es una técnica estadística que contrasta si existen diferencias significativas entre las medias de una o más variables continuas en grupos de población distintos.</p>
                 <p><strong>¿Cuándo se usa?</strong> Cuando quieres comparar las medias de tres o más grupos independientes para determinar si al menos una es significativamente diferente.</p>
                 <div class="formula">F = Varianza entre grupos / Varianza dentro de grupos</div>
@@ -50,10 +53,12 @@
                 <button class="btn-clear" onclick="clearAnova()">Limpiar</button>
             </div>
 
-            <div id="anovaResult"></div>
+            <div id="anovaResultContainer">
+                <div id="anovaResult"></div>
+                <canvas id="anovaChart" style="margin-top: 20px; max-height: 400px;"></canvas>
+            </div>
         </div>
 
-        <!--CHI PART-->
         <div id="chi" class="tab-content">
             <div class="explanation">
                 <h3>Chi cuadrado (χ²)</h3>
@@ -76,10 +81,13 @@
                 <button class="btn-calculate" onclick="calculateChi()">Calcular Chi Cuadrado</button>
                 <button class="btn-clear" onclick="clearChi()">Limpiar</button>
             </div>
-
-            <div id="chiResult"></div>
+            
+            <div id="chiResultContainer">
+                <div id="chiResult"></div>
+                <canvas id="chiChart" style="margin-top: 20px; max-height: 400px;"></canvas>
+            </div>
         </div>
-        <!--PCA PART-->
+        
         <div id="pca" class="tab-content">
             <div class="explanation">
                 <h3>Análisis de componentes principales (PCA)</h3>
@@ -102,12 +110,15 @@
                 <button class="btn-clear" onclick="clearPca()">Limpiar</button>
             </div>
 
-            <div id="pcaResult"></div>
+            <div id="pcaResultContainer">
+                <div id="pcaResult"></div>
+                <canvas id="pcaChart" style="margin-top: 20px; max-height: 400px;"></canvas>
+            </div>
         </div>
-        <!--CORRELACION PART-->
+        
         <div id="correlation" class="tab-content">
             <div class="explanation">
-                <h3>Coeficiente de correlación de pearson</h3>
+                <h3>Coeficiente de correlación de Pearson</h3>
                 <p><strong>¿Qué es?</strong> El coeficiente de correlación de Pearson mide el grado de covariación entre dos variables cuantitativas relacionadas linealmente.</p>
                 <p><strong>¿Cuándo se usa?</strong> Para determinar la fuerza y dirección de la relación lineal entre dos variables continuas.</p>
                 <div class="formula">r = Σ[(X - X̄)(Y - Ȳ)] / √[Σ(X - X̄)² × Σ(Y - Ȳ)²]</div>
@@ -134,7 +145,10 @@
                 <button class="btn-clear" onclick="clearCorrelation()">Limpiar</button>
             </div>
 
-            <div id="corrResult"></div>
+            <div id="corrResultContainer">
+                <div id="corrResult"></div>
+                <canvas id="corrChart" style="margin-top: 20px; max-height: 400px;"></canvas>
+            </div>
         </div>
 
         <footer>

@@ -1,3 +1,5 @@
+let myCorrChart; // Variable para la instancia del gráfico
+
 function parseInputArray(input) {
     return input.split(',')
         .map(v => parseFloat(v.trim()))
@@ -39,6 +41,7 @@ function calculateCorrelation() {
     let numerator = 0;
     let denX = 0;
     let denY = 0;
+    const scatterData = []; // Array para el gráfico
 
     for (let i = 0; i < n; i++) {
         const diffX = x[i] - meanX;
@@ -46,22 +49,16 @@ function calculateCorrelation() {
         numerator += diffX * diffY;
         denX += Math.pow(diffX, 2);
         denY += Math.pow(diffY, 2);
+        scatterData.push({ x: x[i], y: y[i] }); // Guardar datos para el gráfico
     }
 
     const denominator = Math.sqrt(denX) * Math.sqrt(denY);
 
     if (denominator === 0) {
         document.getElementById('corrResult').innerHTML = `
-            <div class="result-box">
-                <h3>Resultados de Correlación</h3>
-                <div class="result-item">
-                    <strong>Coeficiente (r):</strong>
-                    <span class="result-value">No se puede calcular</span>
-                </div>
-                <div class="result-item">
-                    <strong>Interpretación:</strong>
-                    <span class="result-value">No hay varianza en al menos una de las variables.</span>
-                </div>
+            <div class="result-summary">
+                <h3 class="results-header">Error</h3>
+                <p>No se puede calcular la correlación porque al menos una de las variables no tiene varianza (todos los valores son iguales).</p>
             </div>
         `;
         return;
@@ -69,6 +66,25 @@ function calculateCorrelation() {
 
     const r = numerator / denominator;
     
+    // --- INICIO DE LA CORRECCIÓN ---
+    
+    const df = n - 2;
+    let tStat, pValue;
+
+    // Si r es 1 o -1 (o un error de punto flotante muy cercano),
+    // el p-value es 0 y t-statistic es infinito.
+    if (Math.abs(r) >= 0.999999999) {
+        tStat = (r > 0) ? Infinity : -Infinity;
+        pValue = 0;
+    } else {
+        // Si no, calcula normalmente.
+        tStat = r * Math.sqrt(df / (1 - r*r));
+        // Se usa (1 - cdf) * 2 para ser consistente con anova.js y chi.js
+        pValue = (1 - jStat.studentt.cdf(Math.abs(tStat), df)) * 2; 
+    }
+    
+    // --- FIN DE LA CORRECCIÓN ---
+
     // Interpretación
     let interpretation = '';
     const rAbs = Math.abs(r);
@@ -85,38 +101,89 @@ function calculateCorrelation() {
         interpretation = 'Correlación muy débil o inexistente ';
     }
     
-    if (r > 0.1) {
+    if (r > 0.05) { // Se ajusta el umbral para incluir correlaciones débiles
         interpretation += '(positiva)';
-    } else if (r < -0.1) {
+    } else if (r < -0.05) {
         interpretation += '(negativa)';
     } else {
         interpretation = 'Sin correlación lineal aparente';
     }
 
+    let interpretationText = '';
+    let interpretationClass = '';
+    if (pValue < 0.05) {
+        interpretationText = `se considera estadísticamente significativa. (${interpretation.trim()})`;
+        interpretationClass = 'significant';
+    } else {
+        interpretationText = `no se considera estadísticamente significativa. (${interpretation.trim()})`;
+        interpretationClass = 'not-significant';
+    }
+
 
     document.getElementById('corrResult').innerHTML = `
-        <div class="result-box">
-            <h3>Resultados de Correlación de Pearson</h3>
-            <div class="result-item">
-                <strong>Coeficiente de correlación (r):</strong>
-                <span class="result-value">${r.toFixed(6)}</span>
-            </div>
-            <div class="result-item">
-                <strong>Número de pares (n):</strong>
-                <span class="result-value">${n}</span>
-            </div>
-            <div class="result-item">
-                <strong>Interpretación:</strong>
-                <span class="result-value">${interpretation}</span>
-            </div>
+        <div class="result-summary">
+            <h3 class="results-header">Resultados</h3>
+            <p><strong>Coeficiente de correlación (r)</strong> = ${r.toFixed(6)}</p>
+            <p><strong>Valor p</strong> = ${pValue.toFixed(6)}</p>
+            <p>La correlación <span class="${interpretationClass}">${interpretationText}</span></p>
+        </div>
+
+        <div>
+            <h3 class="results-header">Resumen de los datos</h3>
+            <table class="results-table">
+                <thead>
+                    <tr><th>Variable</th><th>N</th><th>Media</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>Variable X</td><td>${n}</td><td>${meanX.toFixed(2)}</td></tr>
+                    <tr><td>Variable Y</td><td>${n}</td><td>${meanY.toFixed(2)}</td></tr>
+                </tbody>
+            </table>
         </div>
     `;
+    
+    // --- Dibujar el gráfico ---
+    renderCorrChart(scatterData);
+}
+
+function renderCorrChart(data) {
+    const ctx = document.getElementById('corrChart').getContext('2d');
+    
+    if (myCorrChart) {
+        myCorrChart.destroy();
+    }
+
+    myCorrChart = new Chart(ctx, {
+        type: 'scatter',
+        data: {
+            datasets: [{
+                label: 'Relación X-Y',
+                data: data, // Array de objetos {x, y}
+                backgroundColor: 'rgba(94, 33, 41, 0.6)' // Color guinda
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+                title: { display: true, text: 'Gráfico de dispersión' },
+                legend: { display: false }
+            },
+            scales: {
+                x: { title: { display: true, text: 'Variable X' } },
+                y: { title: { display: true, text: 'Variable Y' } }
+            }
+        }
+    });
 }
 
 function clearCorrelation() {
     document.getElementById('corrX').value = '';
     document.getElementById('corrY').value = '';
     document.getElementById('corrResult').innerHTML = '';
+    if (myCorrChart) {
+        myCorrChart.destroy();
+    }
 }
 
 function loadCorrExample1() {

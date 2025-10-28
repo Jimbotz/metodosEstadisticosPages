@@ -1,3 +1,5 @@
+let myPcaChart; // Variable para la instancia del gráfico
+
 // PCA Functions
 function calculatePca() {
     const input = document.getElementById('pcaInput').value.trim();
@@ -30,7 +32,7 @@ function calculatePca() {
     const nRows = data.length;
     const nCols = data[0].length;
 
-    // 1. Calcular medias de cada columna
+    // 1. Calcular medias
     const means = Array(nCols).fill(0);
     for (let j = 0; j < nCols; j++) {
         for (let i = 0; i < nRows; i++) {
@@ -39,12 +41,12 @@ function calculatePca() {
         means[j] /= nRows;
     }
 
-    // 2. Centrar los datos
+    // 2. Centrar datos
     const centered = data.map(row => 
         row.map((val, j) => val - means[j])
     );
 
-    // 3. Calcular la matriz de covarianza
+    // 3. Calcular matriz de covarianza
     const covMatrix = Array(nCols).fill(0).map(() => Array(nCols).fill(0));
     for (let i = 0; i < nCols; i++) {
         for (let j = 0; j < nCols; j++) {
@@ -56,56 +58,98 @@ function calculatePca() {
         }
     }
 
-    // 4. Extraer varianzas (diagonal de la matriz) y varianza total
+    // 4. Extraer varianzas y porcentaje
     const variances = covMatrix.map((row, i) => row[i]);
     const totalVariance = variances.reduce((a, b) => a + b, 0);
     const variancePercent = variances.map(v => (v / totalVariance * 100));
 
-    // Formatear la matriz de covarianza para mostrarla
-    let covMatrixHtml = '<strong>Matriz de Varianza-Covarianza:</strong><pre>';
-    covMatrix.forEach(row => {
-        covMatrixHtml += row.map(val => val.toFixed(4).padStart(10)).join(' ') + '\n';
-    });
-    covMatrixHtml += '</pre>';
+    // --- Generación del nuevo HTML ---
+    const resultDiv = document.getElementById('pcaResult');
     
-    let varianceHtml = '<strong>Varianza por variable original:</strong><pre>';
-    variances.forEach((v, i) => {
-        varianceHtml += `Var ${i+1}: ${v.toFixed(4)} (${variancePercent[i].toFixed(2)}%)\n`;
+    // Formatear la matriz de covarianza para la tabla
+    let covTable = `<table class="results-table"><thead><tr><th></th>`;
+    for(let j=0; j<nCols; j++) covTable += `<th>Var ${j+1}</th>`;
+    covTable += `</tr></thead><tbody>`;
+    covMatrix.forEach((row, i) => {
+        covTable += `<tr><td>Var ${i+1}</td>`;
+        covTable += row.map(val => `<td>${val.toFixed(4)}</td>`).join('');
+        covTable += `</tr>`;
     });
-    varianceHtml += '</pre>';
+    covTable += `</tbody></table>`;
+    
+    // Formatear la tabla de varianza
+    let varTable = `<table class="results-table"><thead><tr><th>Variable</th><th>Varianza</th><th>% de Varianza</th></tr></thead><tbody>`;
+    variances.forEach((v, i) => {
+        varTable += `<tr><td>Var ${i+1}</td><td>${v.toFixed(4)}</td><td>${variancePercent[i].toFixed(2)}%</td></tr>`;
+    });
+    varTable += `<tr><td><strong>Total</strong></td><td><strong>${totalVariance.toFixed(4)}</strong></td><td><strong>100.00%</strong></td></tr>`;
+    varTable += `</tbody></table>`;
+    
+    resultDiv.innerHTML = `
+        <div class="result-summary">
+            <h3 class="results-header">Resumen de varianza</h3>
+            <p><strong>Dimensiones:</strong> ${nRows} observaciones × ${nCols} variables</p>
+            <p><strong>Varianza total:</strong> ${totalVariance.toFixed(4)}</p>
+            ${varTable}
+        </div>
 
-    document.getElementById('pcaResult').innerHTML = `
-        <div class="result-box">
-            <h3>Resultados del Análisis de Varianza (Paso previo al PCA)</h3>
-            <div class="result-item">
-                <strong>Dimensiones:</strong>
-                <span class="result-value">${nRows} observaciones × ${nCols} variables</span>
-            </div>
-            <div class="result-item">
-                <strong>Medias de las variables:</strong>
-                <span class="result-value">${means.map(m => m.toFixed(4)).join(', ')}</span>
-            </div>
-            <div class="result-item">
-                ${covMatrixHtml}
-            </div>
-            <div class="result-item">
-                <strong>Varianza total:</strong>
-                <span class="result-value">${totalVariance.toFixed(4)}</span>
-            </div>
-            <div class="result-item">
-                ${varianceHtml}
-            </div>
-            <div class="result-item">
-                <strong>Nota:</strong>
-                <span class="result-value" style="font-size: 0.9em;">Esto muestra la varianza de las variables originales. Un PCA completo calcula los 'eigenvalores' y 'eigenvectores' de la matriz de covarianza para encontrar los nuevos componentes, lo cual requiere una librería de álgebra lineal.</span>
-            </div>
+        <div>
+            <h3 class="results-header">Matriz de varianza-covarianza</h3>
+            ${covTable}
+        </div>
+        <div class="result-summary" style="margin-top: 15px;">
+            <p><strong>Nota:</strong> Un PCA completo calcula "Eigenvalores" (varianza de nuevos componentes) a partir de esta matriz. Esta tabla y el gráfico muestran la varianza de las *variables originales*.</p>
         </div>
     `;
+    
+    // --- Dibujar el gráfico ---
+    renderPcaChart(variancePercent);
+}
+
+function renderPcaChart(variancePercent) {
+    const ctx = document.getElementById('pcaChart').getContext('2d');
+    
+    if (myPcaChart) {
+        myPcaChart.destroy();
+    }
+    
+    const labels = variancePercent.map((_, i) => `Variable ${i+1}`);
+    
+    myPcaChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: '% de Varianza Explicada',
+                data: variancePercent,
+                backgroundColor: 'rgba(94, 33, 41, 0.6)',
+                borderColor: 'rgba(94, 33, 41, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+                title: { display: true, text: 'Gráfico de varianza por variable' },
+                legend: { display: false }
+            },
+            scales: {
+                y: { 
+                    beginAtZero: true, 
+                    title: { display: true, text: '% de Varianza' } 
+                }
+            }
+        }
+    });
 }
 
 function clearPca() {
     document.getElementById('pcaInput').value = '';
     document.getElementById('pcaResult').innerHTML = '';
+    if (myPcaChart) {
+        myPcaChart.destroy();
+    }
 }
 
 function loadPcaExample() {
