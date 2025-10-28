@@ -1,21 +1,9 @@
-'use strict';
-
-/**
- * Función auxiliar para parsear una cadena de entrada en un array de números.
- * @param {string} input - La cadena de texto (ej. "1, 2, 3").
- * @returns {number[]} - Un array de números.
- */
 function parseInputArray(input) {
     return input.split(',')
         .map(v => parseFloat(v.trim()))
         .filter(v => !isNaN(v));
 }
 
-/**
- * Función auxiliar para calcular la media de un array.
- * @param {number[]} arr - El array de números.
- * @returns {number} - La media.
- */
 function getMean(arr) {
     if (arr.length === 0) return 0;
     return arr.reduce((a, b) => a + b, 0) / arr.length;
@@ -65,7 +53,7 @@ function calculateCorrelation() {
     if (denominator === 0) {
         document.getElementById('corrResult').innerHTML = `
             <div class="result-box">
-                <h3>📊 Resultados de Correlación</h3>
+                <h3>Resultados de Correlación</h3>
                 <div class="result-item">
                     <strong>Coeficiente (r):</strong>
                     <span class="result-value">No se puede calcular</span>
@@ -108,7 +96,7 @@ function calculateCorrelation() {
 
     document.getElementById('corrResult').innerHTML = `
         <div class="result-box">
-            <h3>📊 Resultados de Correlación de Pearson</h3>
+            <h3>Resultados de Correlación de Pearson</h3>
             <div class="result-item">
                 <strong>Coeficiente de correlación (r):</strong>
                 <span class="result-value">${r.toFixed(6)}</span>

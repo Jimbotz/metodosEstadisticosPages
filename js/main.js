@@ -1,12 +1,5 @@
-'use strict';
-
-/**
- * Muestra una pestaña de contenido y oculta las demás.
- * @param {string} tabId - El ID del contenido de la pestaña a mostrar.
- * @param {HTMLElement} element - El elemento (botón) de la pestaña en el que se hizo clic.
- */
 function showTab(tabId, element) {
-    // Ocultar todo el contenido
+    // Ocultar contenido del tab q no este
     const contents = document.querySelectorAll('.tab-content');
     contents.forEach(content => content.classList.remove('active'));
 

@@ -1,5 +1,3 @@
-'use strict';
-
 // Chi Cuadrado Functions
 function calculateChi() {
     const input = document.getElementById('chiInput').value.trim();
@@ -73,7 +71,7 @@ function calculateChi() {
 
     document.getElementById('chiResult').innerHTML = `
         <div class="result-box">
-            <h3>📊 Resultados del Chi Cuadrado</h3>
+            <h3>Resultados del Chi Cuadrado</h3>
             <div class="result-item">
                 <strong>Dimensión de la tabla:</strong>
                 <span class="result-value">${nRows} × ${nCols}</span>

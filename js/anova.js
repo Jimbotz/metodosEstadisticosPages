@@ -1,5 +1,3 @@
-'use strict';
-
 // ANOVA Functions
 function addGroup() {
     const container = document.getElementById('anovaGroups');
@@ -86,7 +84,7 @@ function calculateAnova() {
 
     document.getElementById('anovaResult').innerHTML = `
         <div class="result-box">
-            <h3>📊 Resultados del ANOVA</h3>
+            <h3>Resultados del ANOVA</h3>
             <div class="result-item">
                 <strong>Número de grupos (k):</strong>
                 <span class="result-value">${k}</span>

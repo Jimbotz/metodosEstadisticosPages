@@ -1,5 +1,3 @@
-'use strict';
-
 // PCA Functions
 function calculatePca() {
     const input = document.getElementById('pcaInput').value.trim();
@@ -78,7 +76,7 @@ function calculatePca() {
 
     document.getElementById('pcaResult').innerHTML = `
         <div class="result-box">
-            <h3>📊 Resultados del Análisis de Varianza (Paso previo al PCA)</h3>
+            <h3>Resultados del Análisis de Varianza (Paso previo al PCA)</h3>
             <div class="result-item">
                 <strong>Dimensiones:</strong>
                 <span class="result-value">${nRows} observaciones × ${nCols} variables</span>

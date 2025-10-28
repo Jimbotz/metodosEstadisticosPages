@@ -1,3 +1,30 @@
+:root {
+    --color-guinda-principal: #5e2129;
+    --color-guinda-oscuro: #5d1922;
+    --color-guinda-medio: #5c2a31;
+    --color-rojo-borde: #943417;
+
+    --color-blanco: #ffffff;
+    --color-fondo-claro: #f8f9fa;
+    --color-fondo-claro-hover: #e9ecef;
+    --color-borde: #dee2e6;
+    --color-texto-principal: #495057; 
+    --color-texto-gris: #6c757d;
+    --color-texto-gris-hover: #5a6268;
+    --color-fondo-oscuro: #343a40;
+    --color-texto-oscuro: #212529; 
+
+    --color-exito: #28a745;
+    --color-exito-hover: #4baa61;
+    --color-peligro: #dc3545;
+    --color-aviso: #ffc107;
+    --color-aviso-hover: #ffb300;
+
+    --color-sombra: rgba(0,0,0,0.3);
+    --color-sombra-guinda: rgba(92, 42, 49, 0.4); 
+    --color-blanco-transparente: rgba(255,255,255,0.2);
+}
+
 * {
     margin: 0;
     padding: 0;
@@ -6,23 +33,25 @@
 
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, var(--color-guinda-principal) 0%, var(--color-guinda-oscuro) 100%);
     min-height: 100vh;
     padding: 20px;
+    /* CAMBIO: Color de texto por defecto */
+    color: var(--color-texto-oscuro);
 }
 
 .container {
     max-width: 1200px;
     margin: 0 auto;
-    background: white;
+    background: var(--color-blanco);
     border-radius: 20px;
-    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    box-shadow: 0 20px 60px var(--color-sombra);
     overflow: hidden;
 }
 
 header {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
+    background: linear-gradient(135deg, var(--color-guinda-principal) 0%, var(--color-guinda-medio) 100%);
+    color: var(--color-blanco); /* (Se respeta) */
     padding: 30px;
     text-align: center;
 }
@@ -39,8 +68,8 @@ header p {
 
 .tabs {
     display: flex;
-    background: #f8f9fa;
-    border-bottom: 2px solid #dee2e6;
+    background: var(--color-fondo-claro);
+    border-bottom: 2px solid var(--color-borde);
     overflow-x: auto;
 }
 
@@ -53,19 +82,21 @@ header p {
     background: none;
     font-size: 1.1em;
     font-weight: 600;
-    color: #6c757d;
+    /* CAMBIO: Texto a negro */
+    color: var(--color-texto-oscuro);
     transition: all 0.3s ease;
     min-width: 150px;
 }
 
 .tab:hover {
-    background: #e9ecef;
+    background: var(--color-fondo-claro-hover);
 }
 
+/* Tus colores ya estaban aplicados aquí, se respeta */
 .tab.active {
-    color: #667eea;
-    background: white;
-    border-bottom: 3px solid #667eea;
+    color: var(--color-guinda-medio); /* (Se respeta) */
+    background: var(--color-blanco);
+    border-bottom: 3px solid var(--color-rojo-borde);
 }
 
 .tab-content {
@@ -84,34 +115,36 @@ header p {
 }
 
 .explanation {
-    background: #f8f9fa;
+    background: var(--color-fondo-claro);
     padding: 25px;
     border-radius: 10px;
     margin-bottom: 30px;
-    border-left: 5px solid #667eea;
+    border-left: 5px solid var(--color-rojo-borde);
 }
 
 .explanation h3 {
-    color: #667eea;
+    color: var(--color-rojo-borde); /* (Se respeta) */
     margin-bottom: 15px;
     font-size: 1.5em;
 }
 
 .explanation p {
     line-height: 1.8;
-    color: #495057;
+    /* CAMBIO: Texto a negro */
+    color: var(--color-texto-oscuro);
     margin-bottom: 10px;
 }
 
 .formula {
-    background: white;
+    background: var(--color-blanco);
     padding: 15px;
     border-radius: 8px;
     margin: 15px 0;
     font-family: 'Courier New', monospace;
     text-align: center;
     font-size: 1.1em;
-    border: 2px dashed #667eea;
+    border: 2px dashed var(--color-rojo-borde);
+    /* (Hereda el color negro del body) */
 }
 
 .input-group {
@@ -121,7 +154,8 @@ header p {
 .input-group label {
     display: block;
     margin-bottom: 10px;
-    color: #495057;
+    /* CAMBIO: Texto a negro */
+    color: var(--color-texto-oscuro);
     font-weight: 600;
     font-size: 1.1em;
 }
@@ -129,15 +163,17 @@ header p {
 .input-group input, .input-group textarea {
     width: 100%;
     padding: 15px;
-    border: 2px solid #dee2e6;
+    border: 2px solid var(--color-borde);
     border-radius: 8px;
     font-size: 1em;
     transition: border-color 0.3s;
+    /* (Hereda el color negro del body) */
 }
 
+/* Tu color ya estaba aplicado aquí, se respeta */
 .input-group input:focus, .input-group textarea:focus {
     outline: none;
-    border-color: #667eea;
+    border-color: var(--color-rojo-borde);
 }
 
 .input-group textarea {
@@ -147,7 +183,8 @@ header p {
 
 .btn-group {
     display: flex;
-    gap: 15px;
+    /* CAMBIO: Más margen */
+    gap: 20px;
     margin-bottom: 30px;
 }
 
@@ -162,28 +199,29 @@ button {
     transition: all 0.3s ease;
 }
 
+/* Tu color ya estaba aplicado aquí, se respeta */
 .btn-calculate {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
+    background: linear-gradient(135deg, var(--color-guinda-principal) 0%, var(--color-guinda-medio) 100%);
+    color: var(--color-blanco); /* (Se respeta) */
 }
 
 .btn-calculate:hover {
     transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+    box-shadow: 0 5px 15px var(--color-sombra-guinda);
 }
 
 .btn-clear {
-    background: #6c757d;
-    color: white;
+    background: var(--color-texto-gris);
+    color: var(--color-blanco); /* (Se respeta) */
 }
 
 .btn-clear:hover {
-    background: #5a6268;
+    background: var(--color-texto-gris-hover);
 }
 
 .result-box {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
+    background: linear-gradient(135deg, var(--color-guinda-principal) 0%, var(--color-guinda-medio) 100%);
+    color: var(--color-blanco); /* (Se respeta) */
     padding: 30px;
     border-radius: 10px;
     margin-top: 30px;
@@ -195,7 +233,7 @@ button {
 }
 
 .result-item {
-    background: rgba(255,255,255,0.2);
+    background: var(--color-blanco-transparente);
     padding: 15px;
     border-radius: 8px;
     margin-bottom: 15px;
@@ -213,32 +251,32 @@ button {
 }
 
 footer {
-    background: #343a40;
-    color: white;
+    background: var(--color-fondo-oscuro);
+    color: var(--color-blanco); /* (Se respeta) */
     padding: 20px;
     text-align: center;
 }
 
 .example-buttons {
     display: flex;
-    gap: 10px;
+    gap: 15px;
     margin-top: 15px;
     flex-wrap: wrap;
 }
 
 .btn-example {
-    padding: 10px 20px;
-    background: #ffc107;
-    color: #212529;
+    background: var(--color-aviso);
+    margin: 5px 0 5px 0;
+    color: var(--color-texto-oscuro); 
     border: none;
-    border-radius: 5px;
+    border-radius: 4px;
     cursor: pointer;
-    font-weight: 600;
-    transition: all 0.3s;
+    font-weight: 500;
+    transition: all 0.3s
 }
 
 .btn-example:hover {
-    background: #ffb300;
+    background: var(--color-aviso-hover);
     transform: translateY(-2px);
 }
 
@@ -260,25 +298,30 @@ footer {
 
 .btn-add-group {
     padding: 10px 20px;
-    background: #28a745;
-    color: white;
+    margin-top: 10px;
+    background: var(--color-exito);
+    color: var(--color-blanco); /* (Se respeta) */
     border: none;
     border-radius: 5px;
     cursor: pointer;
     font-weight: 600;
     margin-bottom: 15px;
-    /* Ajuste para que no ocupe todo el ancho */
     flex: none; 
     width: fit-content;
+    transition: all 0.3s;
+}
+
+.btn-add-group:hover {
+    background: var(--color-exito-hover);
+    transform: translateY(-2px);
 }
 
 .btn-remove-group {
     padding: 10px 15px;
-    background: #dc3545;
-    color: white;
+    background: var(--color-peligro);
+    color: var(--color-blanco); /* (Se respeta) */
     border: none;
     border-radius: 5px;
     cursor: pointer;
-     /* Ajuste para que no ocupe todo el ancho */
     flex: none;
 }
