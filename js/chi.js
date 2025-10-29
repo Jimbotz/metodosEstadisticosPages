@@ -1,4 +1,4 @@
-let myChiChart; // Variable para la instancia del gráfico
+let myChiChart; 
 
 // Chi Cuadrado Functions
 function calculateChi() {
@@ -40,11 +40,11 @@ function calculateChi() {
 
     let chiSquare = 0;
     const expected = [];
-    const contributions = []; // <-- NUEVO: Matriz para guardar las contribuciones
+    const contributions = []; // Matriz para guardar las contribuciones
 
     for (let i = 0; i < nRows; i++) {
         expected[i] = [];
-        contributions[i] = []; // <-- NUEVO: Inicializar la fila interna
+        contributions[i] = []; // Inicializar la fila interna
         for (let j = 0; j < nCols; j++) {
             const exp = (rowTotals[i] * colTotals[j]) / total;
             if (exp === 0) {
@@ -54,15 +54,15 @@ function calculateChi() {
             expected[i][j] = exp;
             
             // --- Cálculo de contribución individual ---
-            const contrib = Math.pow(rows[i][j] - exp, 2) / exp; // <-- NUEVO
-            contributions[i][j] = contrib; // <-- NUEVO: Guardar contribución
-            chiSquare += contrib; // <-- MODIFICADO: Sumar la contribución
+            const contrib = Math.pow(rows[i][j] - exp, 2) / exp;
+            contributions[i][j] = contrib; // Guardar contribución
+            chiSquare += contrib; // Sumar la contribución
         }
     }
 
     const df = (nRows - 1) * (nCols - 1);
     
-    // Cálculo del Valor p (usando jStat)
+    // Cálculo del valor p con jStat
     const pValue = 1 - jStat.chisquare.cdf(chiSquare, df);
 
     let interpretationText = '';
@@ -75,7 +75,6 @@ function calculateChi() {
         interpretationClass = 'not-significant';
     }
 
-    // --- Generación del nuevo HTML ---
     const resultDiv = document.getElementById('chiResult');
     resultDiv.innerHTML = `
         <div class="result-summary">
@@ -88,27 +87,26 @@ function calculateChi() {
 
         <div>
             <h3 class="results-header">Tabla de frecuencias observadas</h3>
-            ${createHtmlTable(rows, nRows, nCols, "Fila", "Col")}
+            ${createChiHtmlTable(rows, nRows, nCols, "Fila", "Col")}
         </div>
         
         <div>
             <h3 class="results-header">Tabla de frecuencias esperadas</h3>
-            ${createHtmlTable(expected, nRows, nCols, "Fila", "Col", (val) => val.toFixed(2))}
+            ${createChiHtmlTable(expected, nRows, nCols, "Fila", "Col", (val) => val.toFixed(2))}
         </div>
 
         <div>
             <h3 class="results-header">Tabla de Contribuciones al χ²</h3>
             <p style="text-align: center; font-size: 0.9em; margin-top: -10px;">(La suma de esta tabla es el valor total de χ²)</p>
-            ${createHtmlTable(contributions, nRows, nCols, "Fila", "Col", (val) => val.toFixed(5))}
+            ${createChiHtmlTable(contributions, nRows, nCols, "Fila", "Col", (val) => val.toFixed(5))}
         </div>
         `;
 
-    // --- Dibujar el gráfico ---
     renderChiChart(rows, nRows, nCols);
 }
 
-// Función auxiliar para crear tablas HTML
-function createHtmlTable(data, nRows, nCols, rowHeader, colHeader, formatter = (val) => val) {
+// Función auxiliar para crear tablas 
+function createChiHtmlTable(data, nRows, nCols, rowHeader, colHeader, formatter = (val) => val) {
     let table = '<table class="results-table"><thead><tr>';
     table += `<th>${rowHeader} / ${colHeader}</th>`;
     for (let j = 0; j < nCols; j++) table += `<th>${colHeader} ${j + 1}</th>`;
@@ -131,7 +129,6 @@ function renderChiChart(data, nRows, nCols) {
         myChiChart.destroy();
     }
     
-    // Colores (puedes añadir más)
     const colors = ['rgba(94, 33, 41, 0.6)', 'rgba(148, 52, 23, 0.6)', 'rgba(255, 193, 7, 0.6)', 'rgba(108, 117, 125, 0.6)'];
     
     myChiChart = new Chart(ctx, {
